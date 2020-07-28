@@ -40,7 +40,7 @@ program.command('feature <action> <name>').action(async (action, name) => {
     }
 
     const isClean = await isStatusClean();
-    if(!isClean) {
+    if(action !== 'start' && !isClean) {
       console.log('\n Please commit your changes then try again!\n');
       return;
     }
@@ -136,6 +136,7 @@ async function releaseFinish(name){
 
 async function deleteRemoteBranch(name){
   await git.push(['origin', `:${name}`]);
+  console.log(`The remote branch ${name} has been deleted!`)
 }
 
 program.parse(process.argv)
