@@ -90,11 +90,12 @@ program.command('release <action> <name>').action(async (action, name) => {
 });
 
 
-async function checkoutNewBranch(targetName, base){
+async function checkoutNewBranch(targetName, base = 'develop'){
   await git.checkout(base);
   await git.pull();
   await git.checkout(['-B', targetName]);
   await git.push(['-u', `origin`, targetName]);
+  console.log(`Checkout to ${targetName} base ${base}`);
 }
 
 async function featureFinish(featureName){
