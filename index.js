@@ -101,8 +101,12 @@ async function checkoutNewBranch(targetName, base = 'develop'){
 async function featureFinish(featureName){
   await git.checkout('develop');
   await git.pull();
-  const res = await git.merge([featureName]);
-  console.log('feture finish res: ', res);
+  const mergeSummary = await git.merge([featureName]);
+  if (mergeSummary.failed) {
+    console.error(`Merge resulted in ${ mergeSummary.conflicts.length } conflicts`);
+    return;
+  }
+  console.log(`develop merged ${featureName}!`);
 }
 
 async function isStatusClean(){
