@@ -14,39 +14,44 @@ const RELEASE = 'release'
 const HOTFIX = 'hotfix'
 const BUGFIX = 'bugfix'
 
+const actions = ['start', 'finish', 'publish']
+
+// help options
 program
 .version(version)
 .option('-h --help', 'help');
+
+
 
 program.command('test <name>').action(async (name) => {
   const res = await git.status();
   console.log(res.isClean());
   console.log('\n Please input branch name!\n');
+});
 
-})
-
+// feature
 program.command('feature <action> <name>').action(async (action, name) => {
   try {
 
     // TODO: 判断参数
+    if (!actions.includes(action)) {
+      console.log('\n Please enter a correct action name!\n');
+      return;
+    }
 
     const isClean = await isStatusClean();
     if(!isClean) {
-      console.log('\n Please input branch name!\n');
+      console.log('\n Please commit your changes then try again!\n');
       return;
     }
 
     if (action === 'start') {
       // feature start
-      await git.checkout('develop');
-      await git.pull();
-      await git.checkout(['-B', `${FEATURE}/${name}`]);
-      // await git.raw(`git branch --set-upstream-to=origin/${FEATURE}/${name} ${FEATURE}/${name}`);
-      await git.push(['-u', `origin`, `${FEATURE}/${name}`]);
+      checkoutNewBranch(`${FEATURE}/${name}`);
     } else if (action === 'finish') {
-      featureFinish();
+      featureFinish(`${FEATURE}/${name}`);
     } else if (action === 'publish') {
-      featureFinish();
+      featureFinish(`${FEATURE}/${name}`);
       await git.push();
     }
   } catch(ex) {
@@ -54,6 +59,43 @@ program.command('feature <action> <name>').action(async (action, name) => {
   }
 });
 
+// release
+program.command('release <action> <name>').action(async (action, name) => {
+  try {
+    // TODO: 判断参数
+    if (!actions.includes(action)) {
+      console.log('\n Please enter a correct action name!\n');
+      return;
+    }
+    const isClean = await isStatusClean();
+    if(!isClean) {
+      console.log('\n Please commit your changes then try again!\n');
+      return;
+    }
+
+    if (action === 'start') {
+      checkoutNewBranch(`${RELEASE}/${name}`);
+    } else if (action === 'finish') {
+      releaseFinish(name);
+    } else if (action === 'publish') {
+      releaseFinish(name);
+      await git.push('origin', 'master');
+      await git.push('origin', 'develop');
+      await git.pushTags();
+      deleteRemoteBranch(`${RELEASE}/${name}`);
+    }
+  } catch(ex) {
+    console.log(ex)
+  }
+});
+
+
+async function checkoutNewBranch(targetName, base){
+  await git.checkout(base);
+  await git.pull();
+  await git.checkout(['-B', targetName]);
+  await git.push(['-u', `origin`, targetName]);
+}
 
 async function featureFinish(featureName){
   await git.checkout('develop');
@@ -68,5 +110,26 @@ async function isStatusClean(){
   return isClean;
 }
 
+async function releaseFinish(name){
+  await git.checkout('master');
+  await git.pull();
+  await git.merge([`${RELEASE}/${name}`]);
+  // await git.push();
+  console.log(`master merged ${RELEASE}$/${name}!`);
+  // 打tag
+  await git.tag([name]);
+  // await git.pushTags();
+  console.log(`added tag ${name}!`);
+
+  await git.checkout('develop');
+  await git.pull();
+  await git.merge(['master']);
+  // await git.push();
+  console.log(`develop merged ${RELEASE}$/${name}!`);
+}
+
+async function deleteRemoteBranch(name){
+  await git.push(['origin', `:${name}`]);
+}
 
 program.parse(process.argv)
