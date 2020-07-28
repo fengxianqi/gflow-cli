@@ -53,6 +53,7 @@ program.command('feature <action> <name>').action(async (action, name) => {
     } else if (action === 'publish') {
       featureFinish(`${FEATURE}/${name}`);
       await git.push();
+      deleteRemoteBranch(`${FEATURE}/${name}`);
     }
   } catch(ex) {
     console.log(ex)
