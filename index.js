@@ -34,8 +34,7 @@ program.command('feature <action> <name>').action(async (action, name) => {
   try {
 
     // TODO: 判断参数
-    if (!actions.includes(action)) {
-      console.log('\n Please enter a correct action name!\n');
+    if (!validateArgvs(action)) {
       return;
     }
 
@@ -61,13 +60,18 @@ program.command('feature <action> <name>').action(async (action, name) => {
 });
 
 // release
-program.command('release <action> <name>').action(async (action, name) => {
+program.command('release <action> <name>').action(async (branch, action, name) => {
   try {
-    // TODO: 判断参数
-    if (!actions.includes(action)) {
-      console.log('\n Please enter a correct action name!\n');
+    // // TODO: 判断参数
+    // if (!actions.includes(action)) {
+    //   console.log('\n Please enter a correct action name!\n');
+    //   return;
+    // }
+    if (!validateArgvs(action)) {
       return;
     }
+
+
     const isClean = await isStatusClean();
     if(!isClean) {
       console.log('\n Please commit your changes then try again!\n');
@@ -77,9 +81,9 @@ program.command('release <action> <name>').action(async (action, name) => {
     if (action === 'start') {
       checkoutNewBranch(`${RELEASE}/${name}`);
     } else if (action === 'finish') {
-      releaseFinish(name);
+      deployProd(RELEASE, name);
     } else if (action === 'publish') {
-      releaseFinish(name);
+      deployProd(RELEASE,name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
       await git.pushTags();
@@ -89,6 +93,77 @@ program.command('release <action> <name>').action(async (action, name) => {
     console.log(ex)
   }
 });
+
+// hotfix
+program.command('hotfix <action> <name>').action(async (action, name) => {
+  try {
+
+    // TODO: 判断参数
+    if (!validateArgvs(action)) {
+      return;
+    }
+
+    const isClean = await isStatusClean();
+    // 新开分支时不报错
+    if(action !== 'start' && !isClean) {
+      console.log('\n Please commit your changes then try again!\n');
+      return;
+    }
+
+    if (action === 'start') {
+      checkoutNewBranch(`${HOTFIX}/${name}`, 'master');
+    } else if (action === 'finish') {
+      deployProd(HOTFIX, name);
+    } else if (action === 'publish') {
+      deployProd(HOTFIX, name);
+      await git.push('origin', 'master');
+      await git.push('origin', 'develop');
+      await git.pushTags();
+      deleteRemoteBranch(`${HOTFIX}/${name}`);
+    }
+  } catch(ex) {
+    console.log(ex)
+  }
+});
+
+// bugfix
+program.command('bugfix <action> <name>').action(async (action, name) => {
+  try {
+
+    // TODO: 判断参数
+    if (!validateArgvs(action)) {
+      return;
+    }
+
+    const isClean = await isStatusClean();
+    if(action !== 'start' && !isClean) {
+      console.log('\n Please commit your changes then try again!\n');
+      return;
+    }
+
+    if (action === 'start') {
+      // feature start
+      checkoutNewBranch(`${BUGFIX}/${name}`);
+    } else if (action === 'finish') {
+      featureFinish(`${BUGFIX}/${name}`);
+    } else if (action === 'publish') {
+      featureFinish(`${BUGFIX}/${name}`);
+      await git.push();
+      deleteRemoteBranch(`${BUGFIX}/${name}`);
+    }
+  } catch(ex) {
+    console.log(ex)
+  }
+});
+
+
+function validateArgvs (action) {
+  if (!actions.includes(action)) {
+    console.log('\n Please enter a correct action name! \n');
+    return false;
+  }
+  return true;
+}
 
 
 async function checkoutNewBranch(targetName, base = 'develop'){
@@ -116,22 +191,21 @@ async function isStatusClean(){
   return isClean;
 }
 
-async function releaseFinish(name){
+async function deployProd(branch , name){
   await git.checkout('master');
   await git.pull();
-  await git.merge([`${RELEASE}/${name}`]);
+  await git.merge([`${branch}/${name}`]);
   // await git.push();
-  console.log(`master merged ${RELEASE}$/${name}!`);
+  console.log(`master merged ${branch}$/${name}!`);
   // 打tag
   await git.tag([name]);
-  // await git.pushTags();
   console.log(`added tag ${name}!`);
 
   await git.checkout('develop');
   await git.pull();
   await git.merge(['master']);
   // await git.push();
-  console.log(`develop merged ${RELEASE}$/${name}!`);
+  console.log(`develop merged ${branch}$/${name}!`);
 }
 
 async function deleteRemoteBranch(name){
@@ -140,3 +214,4 @@ async function deleteRemoteBranch(name){
 }
 
 program.parse(process.argv)
+
