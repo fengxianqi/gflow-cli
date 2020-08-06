@@ -1,4 +1,4 @@
-# gitflow-cli
+# gflow-cli
 
 
 ## Usage
