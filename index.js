@@ -19,6 +19,8 @@ const actions = ['start', 'finish', 'publish']
 // help options
 program
 .version(version)
+.option('-t --tag <tag>', 'add a tag base master')
+.option('--no-tag', 'not a tag base master')
 .option('-h --help', 'help');
 
 
@@ -26,6 +28,7 @@ program
 program.command('test <name>').action(async (name) => {
   const res = await git.status();
   console.log(res.isClean());
+  console.log(program.tag)
   console.log('\n Please input branch name!\n');
 });
 
@@ -82,10 +85,13 @@ program.command('release <action> <name>').action(async (branch, action, name) =
       checkoutNewBranch(`${RELEASE}/${name}`);
     } else if (action === 'finish') {
       deployProd(RELEASE, name);
+      // 默认会打tag
+      addTag(name);
     } else if (action === 'publish') {
       deployProd(RELEASE,name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
+      // 默认会打tag
       await git.pushTags();
       deleteRemoteBranch(`${RELEASE}/${name}`);
     }
@@ -114,10 +120,17 @@ program.command('hotfix <action> <name>').action(async (action, name) => {
       checkoutNewBranch(`${HOTFIX}/${name}`, 'master');
     } else if (action === 'finish') {
       deployProd(HOTFIX, name);
+      // 有传tag参数才打tag
+      if(program.tag) {
+        addTag(name);
+      }
     } else if (action === 'publish') {
       deployProd(HOTFIX, name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
+      if(program.tag) {
+        addTag(name);
+      }
       await git.pushTags();
       deleteRemoteBranch(`${HOTFIX}/${name}`);
     }
@@ -197,9 +210,6 @@ async function deployProd(branch , name){
   await git.merge([`${branch}/${name}`]);
   // await git.push();
   console.log(`master merged ${branch}$/${name}!`);
-  // 打tag
-  await git.tag([name]);
-  console.log(`added tag ${name}!`);
 
   await git.checkout('develop');
   await git.pull();
@@ -211,6 +221,22 @@ async function deployProd(branch , name){
 async function deleteRemoteBranch(name){
   await git.push(['origin', `:${name}`]);
   console.log(`The remote branch ${name} has been deleted!`)
+}
+
+async function addTag(name){
+  // 如果传了: --no-tag，则不打tag
+  if (program.tag === false) {
+    return;
+  } 
+  let tagName = name;
+  // 如果有-t参数名称，tagName取传进来的值
+  if(program.tag) {
+    tagName = program.tag
+  }
+  
+  // 打tag
+  await git.tag([tagName, 'master']);
+  console.log(`added tag ${tagName} base master!`);
 }
 
 program.parse(process.argv)
