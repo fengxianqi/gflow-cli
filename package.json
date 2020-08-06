@@ -1,0 +1,29 @@
+{
+  "name": "gitflow-cli",
+  "version": "1.0.0",
+  "description": "git flow cli ",
+  "main": "index.js",
+  "bin": {
+    "gflow": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@fengxianqi.github.com:fengxianqi/gitflow-cli.git"
+  },
+  "keywords": [
+    "git",
+    "flow",
+    "gitflow",
+    "git",
+    "cli"
+  ],
+  "author": "fengxianqi",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^6.0.0",
+    "simple-git": "^2.15.0"
+  }
+}
