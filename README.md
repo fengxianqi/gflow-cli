@@ -1,5 +1,11 @@
 # gflow-cli
-
+[![NPM version](https://img.shields.io/npm/v/gflow-cli.svg)](https://www.npmjs.com/package/gflow-cli)
+[![npm download](https://img.shields.io/npm/dt/gflow-cli.svg?style=flat-square)](https://www.npmjs.com/package/gflow-cli)
+[![license](https://img.shields.io/npm/l/gflow-cli.svg?style=flat-square)](https://github.com/fengxianqi/gflow-cli/blob/master/LICENSE)
+## Installation
+```
+npm i gflow-cli -g
+```
 
 ## Usage
 - [FEATURE](#FEATURE)
