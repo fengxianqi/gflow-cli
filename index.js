@@ -20,7 +20,7 @@ const actions = ['start', 'finish', 'publish']
 program
 .version(version)
 .option('-t --tag <tag>', 'add a tag base master')
-.option('--no-tag', 'not a tag base master')
+.option('--no-tag', 'not add a tag when release finish/publish.')
 .option('-h --help', 'help');
 
 
@@ -63,7 +63,7 @@ program.command('feature <action> <name>').action(async (action, name) => {
 });
 
 // release
-program.command('release <action> <name>').action(async (branch, action, name) => {
+program.command('release <action> <name>').action(async (action, name) => {
   try {
     // // TODO: 判断参数
     // if (!actions.includes(action)) {
@@ -84,11 +84,11 @@ program.command('release <action> <name>').action(async (branch, action, name) =
     if (action === 'start') {
       checkoutNewBranch(`${RELEASE}/${name}`);
     } else if (action === 'finish') {
-      deployProd(RELEASE, name);
+      await deployProd(RELEASE, name);
       // 默认会打tag
       addTag(name);
     } else if (action === 'publish') {
-      deployProd(RELEASE,name);
+      await deployProd(RELEASE,name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
       // 默认会打tag
@@ -119,13 +119,13 @@ program.command('hotfix <action> <name>').action(async (action, name) => {
     if (action === 'start') {
       checkoutNewBranch(`${HOTFIX}/${name}`, 'master');
     } else if (action === 'finish') {
-      deployProd(HOTFIX, name);
+      await deployProd(HOTFIX, name);
       // 有传tag参数才打tag
       if(program.tag) {
         addTag(name);
       }
     } else if (action === 'publish') {
-      deployProd(HOTFIX, name);
+      await deployProd(HOTFIX, name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
       if(program.tag) {
@@ -207,13 +207,22 @@ async function isStatusClean(){
 async function deployProd(branch , name){
   await git.checkout('master');
   await git.pull();
-  await git.merge([`${branch}/${name}`]);
+  const mergeSummary = await git.merge([`${branch}/${name}`]);
+  if (mergeSummary.failed) {
+    console.error(`Merge resulted in ${ mergeSummary.conflicts.length } conflicts`);
+    return;
+  }
   // await git.push();
   console.log(`master merged ${branch}$/${name}!`);
 
   await git.checkout('develop');
   await git.pull();
-  await git.merge(['master']);
+  const mergeSummary2 = await git.merge(['master']);
+  if (mergeSummary2.failed) {
+    console.error(`Merge resulted in ${ mergeSummary2.conflicts.length } conflicts`);
+    return;
+  }
+  
   // await git.push();
   console.log(`develop merged ${branch}$/${name}!`);
 }
@@ -235,7 +244,7 @@ async function addTag(name){
   }
   
   // 打tag
-  await git.tag([tagName, 'master']);
+  await git.tag([tagName, 'master', '-f']);
   console.log(`added tag ${tagName} base master!`);
 }
 
