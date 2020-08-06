@@ -2,7 +2,7 @@
 
 
 ## Usage
-**:point_right: `gitflow feature start <feature_name>`**
+**:point_right: `gflow feature start <feature_name>`**
 
 This will do follows: 
 - git checkout develop
@@ -11,7 +11,7 @@ This will do follows:
 - git push
 
 
-**:point_right: `gitflow feature finish <feature_name>`**
+**:point_right: `gflow feature finish <feature_name>`**
 
 This will do follows: 
 - git checkout develop
@@ -20,7 +20,7 @@ This will do follows:
 
 
 
-**:point_right: `gitflow feature publish <feature_name>`**
+**:point_right: `gflow feature publish <feature_name>`**
 
 This will do follows: 
 - git checkout develop
@@ -32,15 +32,15 @@ This will do follows:
 :warning: This will delete the remote branch `feature/<feature_name>`, but do not delete local feature branch.
 
 
-**:point_right: `gitflow release start <release_name>`**
+**:point_right: `gflow release start <release_name>`**
 
 This will do follows: 
 - git checkout develop
 - git pull
-- git checkout -B release/<feature_name>
+- git checkout -B release/<release_name>
 - git push
 
-**:point_right: `gitflow release finish <release_name>`**
+**:point_right: `gflow release finish <release_name>`**
 
 This will do follows: 
 - git checkout master
@@ -52,7 +52,7 @@ This will do follows:
 - git merge master
 
 
-**:point_right: `gitflow release publish <release_name>`**
+**:point_right: `gflow release publish <release_name>`**
 
 This will do follows: 
 - git checkout master
@@ -69,6 +69,76 @@ This will do follows:
 
 :warning: This will delete the remote branch `release/<release_name>`, but do not delete local release branch.
 
+This will add a tag base master, named <release_name>, you can use `--no-tag` to avoid it.
+
+You can also using `-t <tag_name>` or `--tag <tag_name>` to replace <release_name>.
 
 
-`hotfix`, `bugfix`
+
+**:point_right: `gflow hotfix start <name>`**
+
+This will do follows: 
+- git checkout master
+- git pull
+- git checkout -B hotfix/<name>
+- git push
+
+**:point_right: `gflow hotfix finish <name>`**
+
+This will do follows: 
+- git checkout master
+- git pull
+- git merge hotfix/<name>
+
+- git checkout develop
+- git pull
+- git merge master
+
+
+**:point_right: `gflow hotfix publish <name>`**
+
+This will do follows: 
+- git checkout master
+- git pull
+- git merge hotfix/<name>
+- git push
+
+- git checkout develop
+- git pull
+- git merge master
+- git push
+- git push origin :release/<name>
+
+:warning: This will delete the remote branch `hotfix/<name>`, but do not delete local  branch.
+
+
+
+
+**:point_right: `gflow bugfix start <name>`**
+
+This will do follows: 
+- git checkout develop
+- git pull
+- git checkout -B bugfix/<name>
+- git push
+
+
+**:point_right: `gflow bugfix finish <name>`**
+
+This will do follows: 
+- git checkout develop
+- git pull
+- git merge bugfix/<name>
+
+
+
+**:point_right: `gflow bugfix publish <name>`**
+
+This will do follows: 
+- git checkout develop
+- git pull
+- git merge bugfix/<name>
+- git push
+- git push origin :bugfix/<name>
+
+:warning: This will delete the remote branch `bugfix/<name>`, but do not delete local branch.
