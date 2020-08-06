@@ -2,6 +2,10 @@
 
 
 ## Usage
+- [FEATURE](#FEATURE)
+- [RELEASE](#RELEASE)
+- [HOTFIX](#HOTFIX)
+- [BUGFIX](#BUGFIX)
 
 ------
 ### FEATURE
