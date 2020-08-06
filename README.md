@@ -3,9 +3,9 @@
 
 ## Usage
 
-
-### FEATURE
 ------
+### FEATURE
+
 
 **:point_right: `gflow feature start <feature_name>`**
 
@@ -40,8 +40,9 @@ This will do follows:
 
 :warning: This will delete the remote branch `feature/<feature_name>`, but do not delete local feature branch.
 
-### RELEASE
+
 ------
+### RELEASE
 
 **:point_right: `gflow release start <release_name>`**
 
@@ -88,8 +89,9 @@ This will do follows:
 - This will add a tag base master, named <release_name>, you can use `--no-tag` to avoid it.
 - You can also using `-t <tag_name>` or `--tag <tag_name>` to replace <release_name>.
 
-### HOTFIX
 ------
+### HOTFIX
+
 
 **:point_right: `gflow hotfix start <name>`**
 
@@ -131,9 +133,8 @@ This will do follows:
 ```
 :warning: This will delete the remote branch `hotfix/<name>`, but do not delete local  branch.
 
-### BUGFIX
 ------
-
+### BUGFIX
 
 **:point_right: `gflow bugfix start <name>`**
 
