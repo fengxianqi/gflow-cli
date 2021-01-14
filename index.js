@@ -24,7 +24,7 @@ program
 .option('-h --help', 'help');
 
 
-
+// test
 program.command('test <name>').action(async (name) => {
   const res = await git.status();
   console.log(res.isClean());
@@ -86,12 +86,13 @@ program.command('release <action> <name>').action(async (action, name) => {
     } else if (action === 'finish') {
       await deployProd(RELEASE, name);
       // 默认会打tag
-      addTag(name);
+      await addTag(name);
     } else if (action === 'publish') {
       await deployProd(RELEASE,name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
       // 默认会打tag
+      await addTag(name);
       await git.pushTags();
       deleteRemoteBranch(`${RELEASE}/${name}`);
     }
@@ -120,17 +121,14 @@ program.command('hotfix <action> <name>').action(async (action, name) => {
       checkoutNewBranch(`${HOTFIX}/${name}`, 'master');
     } else if (action === 'finish') {
       await deployProd(HOTFIX, name);
-      // 有传tag参数才打tag
-      if(program.tag) {
-        addTag(name);
-      }
+      // 默认会打tag
+      await addTag(name);
     } else if (action === 'publish') {
       await deployProd(HOTFIX, name);
       await git.push('origin', 'master');
       await git.push('origin', 'develop');
-      if(program.tag) {
-        addTag(name);
-      }
+      // 默认会打tag
+      await addTag(name);
       await git.pushTags();
       deleteRemoteBranch(`${HOTFIX}/${name}`);
     }
