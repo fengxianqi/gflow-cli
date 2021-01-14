@@ -4,6 +4,9 @@
 [![license](https://img.shields.io/npm/l/gflow-cli.svg?style=flat-square)](https://github.com/fengxianqi/gflow-cli/blob/master/LICENSE)
 
 A git flow cli using nodejs, which improve your efficiency.
+
+![gitflow png](/assets/gitflow.png)
+
 ## Installation
 ```
 npm i gflow-cli -g
