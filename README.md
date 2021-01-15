@@ -77,10 +77,14 @@ This will do follows:
 - git pull
 - git merge release/<release_name>
 
+- git tag <release_name> master -f
+
 - git checkout develop
 - git pull
 - git merge master
 ```
+- This will add a tag base master, named <release_name>, you can use `--no-tag` to avoid it.
+- You can also using `-t <tag_name>` or `--tag <tag_name>` to replace <release_name>.
 
 **:point_right: `gflow release publish <release_name>`**
 
@@ -90,8 +94,10 @@ This will do follows:
 - git pull
 - git merge release/<release_name>
 - git push
-- git tag <release_name>
+
+- git tag <release_name> master -f
 - git push --tags
+
 - git checkout develop
 - git pull
 - git merge master
@@ -126,10 +132,14 @@ This will do follows:
 - git pull
 - git merge hotfix/<name>
 
+- git tag <name> master -f
+
 - git checkout develop
 - git pull
 - git merge master
 ```
+- This will add a tag base master, named <hotfix_name>, you can use `--no-tag` to avoid it.
+- You can also using `-t <tag_name>` or `--tag <tag_name>` to replace <hotfix_name>.
 
 **:point_right: `gflow hotfix publish <name>`**
 
@@ -140,14 +150,19 @@ This will do follows:
 - git merge hotfix/<name>
 - git push
 
+- git tag <name> master -f
+- git push --tags
+
 - git checkout develop
 - git pull
 - git merge master
 - git push
 - git push origin :release/<name>
 ```
-:warning: This will delete the remote branch `hotfix/<name>`, but do not delete local  branch.
-
+:warning: 
+- This will delete the remote branch `hotfix/<name>`, but do not delete local  branch.
+- This will add a tag base master, named <hotfix_name>, you can use `--no-tag` to avoid it.
+- You can also using `-t <tag_name>` or `--tag <tag_name>` to replace <hotfix_name>.
 ------
 ### BUGFIX
 
