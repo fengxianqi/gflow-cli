@@ -215,7 +215,7 @@ async function deployProd(branch , name){
 
   await git.checkout('develop');
   await git.pull();
-  const mergeSummary2 = await git.merge(['master']);
+  const mergeSummary2 = await git.merge([`${branch}/${name}`]);
   if (mergeSummary2.failed) {
     console.error(`Merge resulted in ${ mergeSummary2.conflicts.length } conflicts`);
     return;
