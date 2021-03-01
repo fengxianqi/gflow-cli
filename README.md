@@ -79,7 +79,7 @@ This will do follows:
 
 - git checkout develop
 - git pull
-- git merge master
+- git merge release/<release_name>
 ```
 
 **:point_right: `gflow release publish <release_name>`**
@@ -94,7 +94,7 @@ This will do follows:
 - git push --tags
 - git checkout develop
 - git pull
-- git merge master
+- git merge release/<release_name>
 - git push
 - git push origin :release/<release_name>
 ```
@@ -128,7 +128,7 @@ This will do follows:
 
 - git checkout develop
 - git pull
-- git merge master
+- git merge hotfix/<name>
 ```
 
 **:point_right: `gflow hotfix publish <name>`**
@@ -142,7 +142,7 @@ This will do follows:
 
 - git checkout develop
 - git pull
-- git merge master
+- git merge hotfix/<name>
 - git push
 - git push origin :release/<name>
 ```
