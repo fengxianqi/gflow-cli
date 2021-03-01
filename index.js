@@ -211,7 +211,7 @@ async function deployProd(branch , name){
     return;
   }
   // await git.push();
-  console.log(`master merged ${branch}$/${name}!`);
+  console.log(`master merged ${branch}/${name}!`);
 
   await git.checkout('develop');
   await git.pull();
@@ -222,7 +222,7 @@ async function deployProd(branch , name){
   }
   
   // await git.push();
-  console.log(`develop merged ${branch}$/${name}!`);
+  console.log(`develop merged ${branch}/${name}!`);
 }
 
 async function deleteRemoteBranch(name){
