@@ -25,6 +25,6 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^6.0.0",
-    "simple-git": "^2.15.0"
+    "simple-git": "^3.15.0"
   }
 }
